@@ -1,4 +1,4 @@
-package app.booking.user;
+package app.booking.user_controller.model;
 
 import app.booking.sheets.model.Booking;
 import lombok.Getter;

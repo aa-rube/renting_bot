@@ -46,6 +46,8 @@ public class MessagingService {
                 updateReceivedController.executeAsync((EditMessageCaption) msg);
             } else if (msg instanceof ForwardMessage) {
                 updateReceivedController.executeAsync((ForwardMessage) msg);
+            } else if (msg instanceof AnswerCallbackQuery) {
+                updateReceivedController.executeAsync((AnswerCallbackQuery) msg);
             }
 
         } catch (Exception exception) {
@@ -53,39 +55,8 @@ public class MessagingService {
         }
     }
 
-    public void processCallBackAnswer(AnswerCallbackQuery answer) {
-        try {
-            updateReceivedController.executeAsync(answer);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public void processCallBackAnswer(Update update) {
-        try {
-            updateReceivedController.executeAsync(TelegramData.getCallbackQueryAnswer(update));
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
-    public int processSendMessageGetInt(SendMessage msg) {
-        try {
-            return updateReceivedController.execute(msg).getMessageId();
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void editAndAutoDeleteMessage(Object msg, Long time) {
-        EditMessageText emsg = (EditMessageText) msg;
-        try {
-            updateReceivedController.executeAsync(emsg);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
-        Sleep.sleepSafely(time);
-        processMessage(TelegramData.getDeleteMessage(Long.valueOf(emsg.getChatId()), emsg.getMessageId()));
     }
 
     public void deleteSomeMessageFromChat(Long chatId, int msgId, int count) {
@@ -94,16 +65,4 @@ public class MessagingService {
         }
     }
 
-    public void sendPopupMessage(String callbackQueryId, String popupMessage, boolean alert) {
-        AnswerCallbackQuery answer = new AnswerCallbackQuery();
-        answer.setCallbackQueryId(callbackQueryId);
-        answer.setText(popupMessage);
-        answer.setShowAlert(alert);
-
-        try {
-            updateReceivedController.executeAsync(answer);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
 }

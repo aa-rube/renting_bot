@@ -1,14 +1,17 @@
 package app.bot.controller;
 
-import app.booking.handler.UserDialogHandler;
+import app.booking.user_controller.controller.BookingController;
 import app.bot.config.BotConfig;
 import app.bot.handler.CallBackDataHandler;
 import app.bot.handler.TextMsgHandler;
-import app.bot.helpcentre.HelpCentre;
+import app.bot.handler.helpcentre.HelpCentre;
+import app.bot.messaging.TelegramData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Controller
 public class UpdateReceivedController extends TelegramLongPollingBot {
@@ -23,7 +26,7 @@ public class UpdateReceivedController extends TelegramLongPollingBot {
     private CallBackDataHandler callBackDataHandler;
 
     @Autowired
-    private UserDialogHandler userDialogHandler;
+    private BookingController bookingController;
 
     @Autowired
     private HelpCentre helpCentre;
@@ -45,7 +48,7 @@ public class UpdateReceivedController extends TelegramLongPollingBot {
         } else if(update.hasMessage() && update.getMessage().isReply()) {
             helpCentre.replayHandle(update);
         } else if (update.hasMessage() && update.getMessage().hasContact()) {
-            new Thread(() -> userDialogHandler.contactHandler(update)).start();
+            new Thread(() -> bookingController.contactHandler(update)).start();
         } else if (update.hasMessage()) {
             new Thread(() -> textMsgHandler.updateHandler(update)).start();
         }

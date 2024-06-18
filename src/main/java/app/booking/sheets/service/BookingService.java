@@ -1,19 +1,18 @@
 package app.booking.sheets.service;
 
 import app.booking.admin.AdminMessage;
-import app.booking.db.MongoDBRoomService;
+import app.booking.room.service.MongoDBRoomService;
 import app.booking.sheets.model.Room;
 import app.booking.sheets.repository.GoogleSheetsBookingManager;
 import app.booking.sheets.model.Booking;
-import app.booking.sheets.model.UserSearch;
-import app.booking.user.ClientData;
-import app.booking.user.service.UserDataService;
+import app.booking.user_controller.model.UserSearch;
+import app.booking.user_controller.model.ClientData;
+import app.booking.user_controller.model.service.UserDataService;
 import app.bot.messaging.MessagingService;
 import app.bot.messaging.TelegramData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.io.IOException;
 import java.util.Optional;

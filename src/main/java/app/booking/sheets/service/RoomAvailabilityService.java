@@ -1,13 +1,13 @@
-package app.booking.sheets.repository;
+package app.booking.sheets.service;
 
-import app.booking.db.MongoDBRoomService;
+import app.booking.room.service.MongoDBRoomService;
 import app.booking.sheets.model.Room;
-import app.booking.sheets.model.UserSearch;
+import app.booking.user_controller.model.UserSearch;
+import app.booking.sheets.repository.GoogleSheetsBookingManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;

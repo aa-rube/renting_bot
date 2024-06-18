@@ -1,7 +1,7 @@
-package app.booking.controller.search.util;
+package app.booking.util;
 
-import app.booking.sheets.model.UserSearch;
-import app.booking.user.ClientData;
+import app.booking.user_controller.model.UserSearch;
+import app.booking.user_controller.model.ClientData;
 import app.bot.messaging.MessagingService;
 import app.bot.messaging.TelegramData;
 import app.bot.messaging.data.Text;
@@ -25,7 +25,10 @@ public class ExtractClientData {
 
             if (phoneNumber == null || phoneNumber.contains("null")) {
                 msgService.processMessage(TelegramData.getDeleteMessage(search.getUserId(), msgId));
-                msgService.sendPopupMessage(search.getInlineId(), Text.WRONG_PHONE_FORMAT.getText(), false);
+
+                msgService.processMessage(TelegramData.getPopupMessage(search.getInlineId(),
+                        Text.WRONG_PHONE_FORMAT.getText(), false ));
+
                 return null;
             } else {
                 String lastPhone = Last.getLast(clientData.getContactNumbers()) + " canceled";
@@ -43,7 +46,10 @@ public class ExtractClientData {
                     || newCustomerName.contains("canceled")) {
 
                 msgService.processMessage(TelegramData.getDeleteMessage(search.getUserId(), msgId));
-                msgService.sendPopupMessage(search.getInlineId(), Text.WRONG_NAME_FORMAT.getText(), false);
+
+                msgService.processMessage(TelegramData.getPopupMessage(search.getInlineId(),
+                        Text.WRONG_NAME_FORMAT.getText(), false));
+
                 return null;
             } else {
                 String lastName = Last.getLast(clientData.getFullCustomerNames()) + " canceled";
@@ -80,5 +86,12 @@ public class ExtractClientData {
         }
 
         return new String[]{fio, phone};
+    }
+
+    public static String getStringDataKeyboard(ClientData data) {
+
+        return Text.CHANGE_CLIENT_DATA_STRING.getText()
+                + "\n\nФИО: " + Last.getLast(data.getFullCustomerNames())
+                +"\nКонтактный номер: " + Last.getLast(data.getContactNumbers());
     }
 }

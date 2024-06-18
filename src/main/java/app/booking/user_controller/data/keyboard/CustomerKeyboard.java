@@ -1,10 +1,10 @@
-package app.booking.controller.dialog;
+package app.booking.user_controller.data.keyboard;
 
-import app.booking.controller.search.util.ClientDataForKeyboard;
-import app.booking.controller.search.util.Last;
+import app.booking.util.ExtractClientData;
+import app.booking.util.Last;
 import app.booking.sheets.model.Room;
-import app.booking.sheets.model.UserSearch;
-import app.booking.user.ClientData;
+import app.booking.user_controller.model.UserSearch;
+import app.booking.user_controller.model.ClientData;
 import app.bot.messaging.TelegramData;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -95,7 +95,7 @@ public class CustomerKeyboard {
         List<InlineKeyboardButton> changeInfoRow = new ArrayList<>();
         InlineKeyboardButton changeInfoBtn = new InlineKeyboardButton();
         changeInfoBtn.setText("Изменить данные");
-        changeInfoBtn.setSwitchInlineQueryCurrentChat(ClientDataForKeyboard.getStringData(data));
+        changeInfoBtn.setSwitchInlineQueryCurrentChat(ExtractClientData.getStringDataKeyboard(data));
         changeInfoRow.add(changeInfoBtn);
 
         List<InlineKeyboardButton> commentRow = new ArrayList<>();

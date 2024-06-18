@@ -1,7 +1,7 @@
-package app.booking.controller.search;
+package app.booking.user_controller.data.keyboard;
 
-import app.booking.controller.search.util.CorrectForm;
-import app.booking.sheets.model.UserSearch;
+import app.booking.util.CorrectForm;
+import app.booking.user_controller.model.UserSearch;
 import app.bot.messaging.TelegramData;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;

@@ -100,9 +100,17 @@ public class TelegramData {
         return msg;
     }
 
-    public static AnswerCallbackQuery getCallbackQueryAnswer(Update update) {
+    public static Object getPopupMessage(String callbackQueryId, String text, boolean alert) {
         AnswerCallbackQuery answer = new AnswerCallbackQuery();
-        answer.setCallbackQueryId(update.getCallbackQuery().getId());
+        answer.setCallbackQueryId(callbackQueryId);
+        answer.setText(text);
+        answer.setShowAlert(alert);
+        return answer;
+    }
+
+    public static Object getCallbackQueryAnswer(String callbackQueryId) {
+        AnswerCallbackQuery answer = new AnswerCallbackQuery();
+        answer.setCallbackQueryId(callbackQueryId);
         return answer;
     }
 

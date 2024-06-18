@@ -1,17 +1,18 @@
-package app.booking.controller.dialog;
+package app.booking.user_controller.data.message;
 
 import app.booking.admin.AdminMessage;
-import app.booking.controller.search.util.CorrectForm;
-import app.booking.controller.search.util.Last;
-import app.booking.db.MongoDBRoomService;
+import app.booking.user_controller.data.keyboard.CustomerKeyboard;
+import app.booking.util.CorrectForm;
+import app.booking.util.Last;
+import app.booking.room.service.MongoDBRoomService;
 import app.booking.sheets.model.Booking;
 import app.booking.sheets.repository.GoogleSheetsBookingManager;
-import app.booking.sheets.repository.RoomAvailabilityService;
+import app.booking.sheets.service.RoomAvailabilityService;
 import app.booking.sheets.model.Room;
-import app.booking.sheets.model.UserSearch;
-import app.booking.user.ClientData;
+import app.booking.user_controller.model.UserSearch;
+import app.booking.user_controller.model.ClientData;
 import app.booking.util.*;
-import app.booking.util.img.RoomCollageService;
+import app.booking.util.img.CollectImg;
 import app.bot.messaging.GroupMediaMessage;
 import app.bot.messaging.MessagingService;
 import app.bot.messaging.TelegramData;
@@ -48,12 +49,15 @@ public class CustomerMessage {
 
     private static final int PAGE_SIZE = 3;
 
-    public void buildRoomPages(String inlineId, UserSearch userSearch, int msgId) {
-        msgService.sendPopupMessage(inlineId, Text.READING_THE_TABLE.getText(), false);
+    public void buildRoomPages(String inlineId, UserSearch userSearch) {
+        msgService.processMessage(TelegramData.getPopupMessage(inlineId,
+                Text.READING_THE_TABLE.getText(), false ));
+
         List<Room> rooms = roomAvailabilityService.searchAvailableRooms(userSearch);
 
         if (rooms.isEmpty()) {
-            msgService.sendPopupMessage(inlineId, Text.NO_ONE_ROOM.getText(), false);
+            msgService.processMessage(TelegramData.getPopupMessage(inlineId,
+                    Text.NO_ONE_ROOM.getText(), false));
             return;
         }
 
@@ -70,7 +74,7 @@ public class CustomerMessage {
         }
 
         if (startIndex >= totalRooms || endIndex > totalRooms) {
-            msgService.sendPopupMessage(inlineId, "Больше вариантов нет", false);
+            msgService.processMessage(TelegramData.getPopupMessage(inlineId,"Больше вариантов нет",false));
             return;
         }
 
@@ -103,7 +107,8 @@ public class CustomerMessage {
 
 
     public void sendDetailsById(UserSearch userSearch, int objId, int msgId) {
-        msgService.sendPopupMessage(userSearch.getInlineId(), "Загружаем фотографии...", false);
+        msgService.processMessage(TelegramData.getPopupMessage(userSearch.getInlineId(),
+                "Загружаем фотографии...", false ));
 
         Optional<Room> roomOpt = mongoDBRoomService.findByRoomId(objId);
 
@@ -111,7 +116,7 @@ public class CustomerMessage {
             Room room = roomOpt.get();
             String description = getRoomDescription(room);
 
-            java.io.File[] filesArray = RoomCollageService.donloasInManyThreads(room);
+            java.io.File[] filesArray = CollectImg.threadsDownload(room);
 
             GroupMediaMessage.MediaGroupData data = new GroupMediaMessage.MediaGroupData();
             data.setListPhotoFilesId(Arrays.stream(filesArray).toList());
@@ -199,13 +204,14 @@ public class CustomerMessage {
                 + "Вы также можете удалить этот вариант из поисковой выдачи и продолжить поиск или выбрать другую комнату";
     }
 
-    public void addCommentMessage(UserSearch userSearch, Update update, Long chatId) {
-        msgService.sendPopupMessage(userSearch.getInlineId(),
-                "Введите дополнительный комментарий по вашему бронированию для менеджера", false);
+    public void addCommentMessage(UserSearch userSearch) {
+        msgService.processMessage(TelegramData.getPopupMessage(userSearch.getInlineId(),
+                "Введите дополнительный комментарий по вашему бронированию для менеджера", false));
     }
 
     public void completeAddComment(UserSearch userSearch, ClientData data, int msgId) {
-        msgService.sendPopupMessage(userSearch.getInlineId(), "Комментарий успешно добавлен!", false);
+        msgService.processMessage(TelegramData.getPopupMessage(userSearch.getInlineId(),
+                "Комментарий успешно добавлен!", false));
         msgService.deleteSomeMessageFromChat(userSearch.getUserId(), msgId, 1);
         sendBookingResume(userSearch, data);
     }

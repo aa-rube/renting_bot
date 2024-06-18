@@ -14,9 +14,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 @Service
-public class RoomCollageService {
+public class CollectImg {
 
-    public static File[] donloasInManyThreads(Room room) {
+    public static File[] threadsDownload(Room room) {
         ExecutorService executorService = Executors.newFixedThreadPool(room.getLinks().size());
 
         List<Callable<File>> tasks = new ArrayList<>();

@@ -1,8 +1,9 @@
-package app.booking.controller.search;
+package app.booking.user_controller.controller;
 
-import app.booking.controller.dialog.CustomerMessage;
-import app.booking.controller.search.util.CorrectForm;
-import app.booking.sheets.model.UserSearch;
+import app.booking.user_controller.data.keyboard.SearchKeyboard;
+import app.booking.user_controller.data.message.CustomerMessage;
+import app.booking.util.CorrectForm;
+import app.booking.user_controller.model.UserSearch;
 import app.booking.util.Sleep;
 import app.bot.messaging.data.Text;
 import app.bot.messaging.TelegramData;
@@ -19,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 @Service
-public class StartBookingSearch {
+public class SearchController {
     @Lazy
     @Autowired
     private MessagingService msgService;
@@ -36,13 +37,30 @@ public class StartBookingSearch {
     @Getter
     private final CopyOnWriteArraySet<Long> clearFilters = new CopyOnWriteArraySet<>();
 
-    public UserSearch getUserSearch(Long chatId) {
+    public UserSearch getUserSearch(Update update) {
+        String inlineId;
+        Long userId;
+
+        if (update.hasCallbackQuery()) {
+            inlineId = update.getCallbackQuery().getId();
+            userId = update.getCallbackQuery().getFrom().getId();
+        } else {
+            userId = update.getMessage().getFrom().getId();
+
+            if (searchMap.get(userId) != null) {
+                inlineId = searchMap.get(userId).getInlineId();
+            } else {
+                inlineId = "";
+            }
+        }
+
         try {
-            String id = searchMap.get(chatId).getInlineId();
-            return searchMap.get(chatId);
+            getSearchMap().get(userId).setInlineId(inlineId);
+            return searchMap.get(userId);
         } catch (Exception e) {
-            searchMap.put(chatId, newSearch(chatId));
-            return searchMap.get(chatId);
+            searchMap.put(userId, newSearch(userId));
+            getSearchMap().get(userId).setInlineId(inlineId);
+            return searchMap.get(userId);
         }
     }
 
@@ -64,7 +82,8 @@ public class StartBookingSearch {
                 LocalDate.now(),
                 LocalDate.now().plusDays(3),
                 1,
-                new ArrayList<>()
+                new ArrayList<>(),
+                false
         );
 
         searchMap.put(chatId, search);
@@ -89,18 +108,18 @@ public class StartBookingSearch {
         } else if (data.contains("_NEXT_")) {
             changePage(search, chatId, data, msgId);
         } else if (data.contains("USER_SRCH_START")) {
-            customerMessage.buildRoomPages(inlineId, search, msgId);
+            customerMessage.buildRoomPages(inlineId, search);
         } else if (data.contains("USER_SRCH_CLEAR")) {
-            restartSearch(update, chatId, msgId, true);
+            restartSearch(chatId, msgId, true);
         } else if (data.contains("USER_SRCH_NEXTPAGE")) {
+            search.setSearchFilled(true);
             search.setPage(search.getPage() + 1);
             searchMap.put(chatId, search);
-            customerMessage.buildRoomPages(inlineId, search, msgId);
+            customerMessage.buildRoomPages(inlineId, search);
         }
     }
 
-    public void restartSearch(Update update, Long chatId, int msgId, boolean delete) {
-        msgService.processCallBackAnswer(update);
+    public void restartSearch(Long chatId, int msgId, boolean delete) {
         clearFilters.remove(chatId);
 
         newSearch(chatId);

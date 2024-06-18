@@ -3,7 +3,7 @@ package app.booking.admin;
 import app.booking.sheets.model.Room;
 import app.booking.sheets.repository.GoogleSheetsObjectReader;
 import app.booking.sheets.service.BookingService;
-import app.booking.user.service.UserDataService;
+import app.booking.user_controller.model.service.UserDataService;
 import app.bot.messaging.MessagingService;
 import app.bot.messaging.TelegramData;
 import org.springframework.beans.factory.annotation.Autowired;

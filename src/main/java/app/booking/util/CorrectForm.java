@@ -1,4 +1,4 @@
-package app.booking.controller.search.util;
+package app.booking.util;
 
 public class CorrectForm {
 

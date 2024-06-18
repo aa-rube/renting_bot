@@ -1,6 +1,6 @@
-package app.booking.user.repository;
+package app.booking.user_controller.model.repository;
 
-import app.booking.user.ClientData;
+import app.booking.user_controller.model.ClientData;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

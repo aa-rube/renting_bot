@@ -1,18 +1,17 @@
-package app.booking.handler;
+package app.booking.user_controller.controller;
 
-import app.booking.controller.dialog.CustomerMessage;
-import app.booking.controller.search.StartBookingSearch;
-import app.booking.controller.search.util.ExtractClientData;
-import app.booking.controller.search.util.Last;
-import app.booking.controller.search.util.PhoneNumberFormatter;
+import app.booking.user_controller.data.message.CustomerMessage;
+import app.booking.util.ExtractClientData;
+import app.booking.util.Last;
+import app.booking.util.PhoneNumberFormatter;
 import app.booking.sheets.model.Booking;
 import app.booking.sheets.model.Room;
-import app.booking.sheets.model.UserSearch;
+import app.booking.user_controller.model.UserSearch;
 import app.booking.sheets.repository.GoogleSheetsObjectReader;
 import app.booking.sheets.service.BookingService;
-import app.booking.user.ClientData;
-import app.booking.user.service.UserDataService;
-import app.bot.helpcentre.HelpCentre;
+import app.booking.user_controller.model.ClientData;
+import app.booking.user_controller.model.service.UserDataService;
+import app.bot.handler.helpcentre.HelpCentre;
 import app.bot.messaging.TelegramData;
 import app.booking.util.IntParser;
 import app.bot.messaging.MessagingService;
@@ -26,7 +25,7 @@ import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 @Service
-public class UserDialogHandler {
+public class BookingController {
 
     @Lazy
     @Autowired
@@ -36,7 +35,7 @@ public class UserDialogHandler {
     private CustomerMessage customerMessage;
 
     @Autowired
-    private StartBookingSearch startBookingSearch;
+    private SearchController searchController;
 
     @Autowired
     private BookingService bookingService;
@@ -60,14 +59,12 @@ public class UserDialogHandler {
     private final CopyOnWriteArraySet<Long> addComment = new CopyOnWriteArraySet<>();
 
     public void handle(Update update, Long chatId, String data) {
-        String inlineId = update.getCallbackQuery().getId();
-        UserSearch search = startBookingSearch.getUserSearch(chatId);
-        search.setInlineId(inlineId);
-        startBookingSearch.getSearchMap().put(chatId, search);
+        UserSearch search = searchController.getUserSearch(update);
+
         int msgId = update.getCallbackQuery().getMessage().getMessageId();
 
         if (data.contains("USER_SRCH_")) {
-            startBookingSearch.callBackDataHandle(update, chatId, data, msgId);
+            searchController.callBackDataHandle(update, chatId, data, msgId);
             return;
         }
 
@@ -79,7 +76,7 @@ public class UserDialogHandler {
         if (data.contains("_STARTBOOKING_")) {
             int objId = IntParser.getIntByString(data, 2);
             search.setServiceMsgId(msgId);
-            Booking booking = bookingService.createBookingObject(startBookingSearch.getUserSearch(chatId), objId);
+            Booking booking = bookingService.createBookingObject(searchController.getUserSearch(update), objId);
             ClientData clientData = userDataService.getClientData(chatId, update);
 
             if (clientData.getMyBooks() == null) {
@@ -111,7 +108,7 @@ public class UserDialogHandler {
             int objId = IntParser.getIntByString(data, 2);
             Room room = googleSheetsObjectReader.getRecordsFromSheetById(objId).get();
 
-            startBookingSearch.getSearchMap().get(chatId).getDeletedRoomsBySearch().add(objId);
+            searchController.getSearchMap().get(chatId).getDeletedRoomsBySearch().add(objId);
             msgService.deleteSomeMessageFromChat(chatId, msgId, room.getLinks().size() + 1);
             return;
         }
@@ -124,7 +121,7 @@ public class UserDialogHandler {
 
         if (data.contains("USER_COMMENT")) {
             addComment.add(chatId);
-            customerMessage.addCommentMessage(search, update, chatId);
+            customerMessage.addCommentMessage(search);
             return;
         }
 
@@ -148,7 +145,7 @@ public class UserDialogHandler {
 
         if (data.equals("USER_QUESTION_")) {
             helpCentre.startSupport(chatId);
-            msgService.processCallBackAnswer(update);
+            msgService.processMessage(TelegramData.getCallbackQueryAnswer(update.getCallbackQuery().getId()));
         }
     }
 
@@ -157,14 +154,16 @@ public class UserDialogHandler {
         String text = update.getMessage().getText();
         int msgId = update.getMessage().getMessageId();
 
-        UserSearch search = startBookingSearch.getUserSearch(chatId);
+        UserSearch search = searchController.getUserSearch(update);
 
         if (text.equals("/next")
                 || (text.contains("Следующие ") && text.contains(" варианта⏭⏭"))) {
 
+            if (!search.isSearchFilled()) return;
+
             search.setPage(search.getPage() + 1);
-            startBookingSearch.getSearchMap().put(chatId, search);
-            customerMessage.buildRoomPages(search.getInlineId(), search, msgId);
+            searchController.getSearchMap().put(chatId, search);
+            customerMessage.buildRoomPages(search.getInlineId(), search);
             return;
         }
 
@@ -178,12 +177,12 @@ public class UserDialogHandler {
                 addFullName.remove(chatId);
 
                 if (data.getContactNumbers() == null) {
-                    customerMessage.shareYourPhone(startBookingSearch.getUserSearch(chatId));
+                    customerMessage.shareYourPhone(searchController.getUserSearch(update));
                     shareYourPhone.add(chatId);
                     return;
                 } else {
                     if (!Last.getLast(data.getContactNumbers()).contains("canceled")) {
-                        customerMessage.sendBookingResume(startBookingSearch.getUserSearch(chatId), data);
+                        customerMessage.sendBookingResume(searchController.getUserSearch(update), data);
                         return;
                     }
                 }
@@ -202,7 +201,8 @@ public class UserDialogHandler {
             String phone = PhoneNumberFormatter.formatNumber(text);
 
             if (phone == null || phone.equals("null")) {
-                msgService.sendPopupMessage(search.getInlineId(), Text.READING_THE_TABLE.getText(), false);
+                msgService.processMessage(TelegramData.getPopupMessage(search.getInlineId(),
+                        Text.WRONG_PHONE_FORMAT.getText(), false));
 
                 return;
             }
@@ -238,7 +238,10 @@ public class UserDialogHandler {
             if (data == null) return;
 
             userDataService.save(data);
-            msgService.sendPopupMessage(search.getInlineId(), Text.DATA_UPDATED.getText(), false);
+
+            msgService.processMessage(TelegramData.getPopupMessage(search.getInlineId(),
+                    Text.DATA_UPDATED.getText(), false));
+
             customerMessage.sendBookingResume(search, data, msgId);
         }
     }
@@ -246,7 +249,7 @@ public class UserDialogHandler {
     public void contactHandler(Update update) {
         Long chatId = update.getMessage().getChatId();
         int msgId = update.getMessage().getMessageId();
-        UserSearch search = startBookingSearch.getUserSearch(chatId);
+        UserSearch search = searchController.getUserSearch(update);
 
         shareYourPhone.remove(chatId);
 
@@ -254,8 +257,8 @@ public class UserDialogHandler {
         String phone = PhoneNumberFormatter.formatNumber(update.getMessage().getContact().getPhoneNumber());
 
         if (phone == null || phone.equals("null")) {
-            msgService.sendPopupMessage(search.getInlineId(), Text.READING_THE_TABLE.getText(), false);
-
+            msgService.processMessage(TelegramData.getPopupMessage(search.getInlineId(),
+                    Text.WRONG_PHONE_FORMAT.getText(), false));
             return;
         }
 

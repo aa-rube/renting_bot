@@ -1,5 +1,6 @@
-package app.booking.db;
+package app.booking.room.service;
 
+import app.booking.room.repository.RoomRepository;
 import app.booking.sheets.model.Room;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

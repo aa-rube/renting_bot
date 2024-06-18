@@ -1,7 +1,7 @@
-package app.booking.user.service;
+package app.booking.user_controller.model.service;
 
-import app.booking.user.ClientData;
-import app.booking.user.repository.UserDataRepository;
+import app.booking.user_controller.model.ClientData;
+import app.booking.user_controller.model.repository.UserDataRepository;
 import app.booking.util.CustomerName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

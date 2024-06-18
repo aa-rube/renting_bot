@@ -1,7 +1,7 @@
 package app.bot.handler;
 
 import app.booking.admin.AdminMessageController;
-import app.booking.handler.UserDialogHandler;
+import app.booking.user_controller.controller.BookingController;
 import app.bot.messaging.MessagingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -15,7 +15,7 @@ public class CallBackDataHandler {
     private MessagingService msgService;
 
     @Autowired
-    private UserDialogHandler userDialogHandler;
+    private BookingController bookingController;
 
     @Autowired
     private AdminMessageController adminMessageController;
@@ -25,7 +25,7 @@ public class CallBackDataHandler {
         String data = update.getCallbackQuery().getData();
 
         if (data.contains("USER_")) {
-            userDialogHandler.handle(update, chatId, data);
+            bookingController.handle(update, chatId, data);
         }
 
         if (data.contains("ADM_")) {

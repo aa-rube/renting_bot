@@ -1,5 +1,6 @@
-package app.booking.db;
+package app.booking.room.util;
 
+import app.booking.room.service.MongoDBRoomService;
 import app.booking.sheets.model.Room;
 import app.booking.sheets.repository.GoogleSheetsObjectReader;
 import org.springframework.beans.factory.annotation.Autowired;

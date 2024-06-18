@@ -1,4 +1,4 @@
-package app.booking.db;
+package app.booking.room.repository;
 
 import app.booking.sheets.model.Room;
 import org.springframework.data.mongodb.repository.MongoRepository;

@@ -1,11 +1,11 @@
 package app.booking.admin;
 
-import app.booking.controller.search.util.CorrectForm;
-import app.booking.controller.search.util.Last;
-import app.booking.db.MongoDBRoomService;
+import app.booking.util.CorrectForm;
+import app.booking.util.Last;
+import app.booking.room.service.MongoDBRoomService;
 import app.booking.sheets.model.Booking;
 import app.booking.sheets.model.Room;
-import app.booking.user.ClientData;
+import app.booking.user_controller.model.ClientData;
 import app.bot.config.BotConfig;
 import app.bot.messaging.MessagingService;
 import app.bot.messaging.TelegramData;

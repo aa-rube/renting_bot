@@ -1,4 +1,4 @@
-package app.booking.controller.search.util;
+package app.booking.util;
 
 import app.booking.sheets.model.Booking;
 

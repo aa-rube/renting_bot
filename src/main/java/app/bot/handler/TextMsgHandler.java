@@ -1,12 +1,12 @@
 package app.bot.handler;
 
 import app.booking.admin.AdminMessageController;
-import app.booking.controller.dialog.CustomerMessage;
-import app.booking.controller.search.StartBookingSearch;
-import app.booking.handler.UserDialogHandler;
-import app.booking.user.service.UserDataService;
+import app.booking.user_controller.data.message.CustomerMessage;
+import app.booking.user_controller.controller.SearchController;
+import app.booking.user_controller.controller.BookingController;
+import app.booking.user_controller.model.service.UserDataService;
 import app.bot.config.BotConfig;
-import app.bot.helpcentre.HelpCentre;
+import app.bot.handler.helpcentre.HelpCentre;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -20,13 +20,13 @@ public class TextMsgHandler {
     private BotConfig botConfig;
 
     @Autowired
-    private StartBookingSearch startBookingSearch;
+    private SearchController searchController;
 
     @Autowired
     private CustomerMessage customerMessage;
 
     @Autowired
-    private UserDialogHandler userDialogHandler;
+    private BookingController bookingController;
 
     @Autowired
     private UserDataService userDataService;
@@ -49,7 +49,7 @@ public class TextMsgHandler {
         if (text != null && (text.equals("/start") || text.equals("/new_search"))) {
             helpCentre.stopSupport(chatId);
 
-            startBookingSearch.startSearch(chatId);
+            searchController.startSearch(chatId);
 
             if (!userDataService.clientDataExist(chatId)) {
                 userDataService.createClient(update);
@@ -81,7 +81,7 @@ public class TextMsgHandler {
             return;
         }
 
-        userDialogHandler.textHandler(update);
+        bookingController.textHandler(update);
     }
 
 }
