@@ -108,14 +108,11 @@ public class SearchController {
         } else if (data.contains("_NEXT_")) {
             changePage(search, chatId, data, msgId);
         } else if (data.contains("USER_SRCH_START")) {
+            search.setSearchFilled(true);
+            searchMap.put(chatId, search);
             customerMessage.buildRoomPages(inlineId, search);
         } else if (data.contains("USER_SRCH_CLEAR")) {
             restartSearch(chatId, msgId, true);
-        } else if (data.contains("USER_SRCH_NEXTPAGE")) {
-            search.setSearchFilled(true);
-            search.setPage(search.getPage() + 1);
-            searchMap.put(chatId, search);
-            customerMessage.buildRoomPages(inlineId, search);
         }
     }
 
