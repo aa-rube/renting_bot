@@ -6,8 +6,8 @@ import app.bot.messaging.data.Text;
 public class ClientDataForKeyboard {
     public static String getStringData(ClientData data) {
         return Text.CHANGE_CLIENT_DATA_STRING.getText()
-                + "\n\nФИО: " + LastListElement.getLastElement(data.getFullCustomerNames())
-                +"\nКонтактный номер: " + LastListElement.getLastElement(data.getContactNumbers());
+                + "\n\nФИО: " + Last.getLast(data.getFullCustomerNames())
+                +"\nКонтактный номер: " + Last.getLast(data.getContactNumbers());
     }
 
 }

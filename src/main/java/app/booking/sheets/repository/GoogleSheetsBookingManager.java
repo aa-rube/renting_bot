@@ -1,9 +1,7 @@
 package app.booking.sheets.repository;
 
-import app.booking.controller.search.util.LastListElement;
 import app.booking.sheets.config.GoogleSheetsConfig;
 import app.booking.sheets.model.Booking;
-import app.booking.user.ClientData;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

@@ -1,7 +1,7 @@
 package app.booking.admin;
 
 import app.booking.controller.search.util.CorrectForm;
-import app.booking.controller.search.util.LastListElement;
+import app.booking.controller.search.util.Last;
 import app.booking.db.MongoDBRoomService;
 import app.booking.sheets.model.Booking;
 import app.booking.sheets.model.Room;
@@ -59,8 +59,8 @@ public class AdminMessage {
                 + "\n\n"
                 + "Гость " + data.getUserName() + " оставил заявку на бронирование!\n\n"
 
-                + "ФИО: " + LastListElement.getLastElement(data.getFullCustomerNames()) + "\n"
-                + "Телефон: " + LastListElement.getLastElement(data.getContactNumbers()) + "\n"
+                + "ФИО: " + Last.getLast(data.getFullCustomerNames()) + "\n"
+                + "Телефон: " + Last.getLast(data.getContactNumbers()) + "\n"
                 + "Количество гостей: " + booking.getPersonsCount() + "\n"
                 + "Дата заезда: " + booking.getCheckIn() + ", после 12-00\n"
                 + "Дата выезда: " + booking.getCheckOut() + ", до 12 часов\n"

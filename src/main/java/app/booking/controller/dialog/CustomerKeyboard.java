@@ -1,7 +1,7 @@
 package app.booking.controller.dialog;
 
 import app.booking.controller.search.util.ClientDataForKeyboard;
-import app.booking.controller.search.util.LastListElement;
+import app.booking.controller.search.util.Last;
 import app.booking.sheets.model.Room;
 import app.booking.sheets.model.UserSearch;
 import app.booking.user.ClientData;
@@ -113,7 +113,7 @@ public class CustomerKeyboard {
         List<InlineKeyboardButton> deleteRow = new ArrayList<>();
         InlineKeyboardButton deleteBtn = new InlineKeyboardButton();
         deleteBtn.setText("Удалить из выдачи");
-        deleteBtn.setCallbackData("USER_DELETEROOM_" + LastListElement.getLastBooking(data.getMyBooks()).getRoomId());
+        deleteBtn.setCallbackData("USER_DELETEROOM_" + Last.getLastBooking(data.getMyBooks()).getRoomId());
         deleteRow.add(deleteBtn);
 
         keyboardMatrix.add(approveBookingRow);

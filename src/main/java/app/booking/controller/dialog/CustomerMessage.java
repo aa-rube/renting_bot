@@ -2,7 +2,7 @@ package app.booking.controller.dialog;
 
 import app.booking.admin.AdminMessage;
 import app.booking.controller.search.util.CorrectForm;
-import app.booking.controller.search.util.LastListElement;
+import app.booking.controller.search.util.Last;
 import app.booking.db.MongoDBRoomService;
 import app.booking.sheets.model.Booking;
 import app.booking.sheets.repository.GoogleSheetsBookingManager;
@@ -170,13 +170,13 @@ public class CustomerMessage {
 
     public void sendBookingResume(UserSearch userSearch, ClientData data) {
         msgService.processMessage(TelegramData.getEditMessage(userSearch.getUserId(),
-                getResume(LastListElement.getLastBooking(data.getMyBooks()), userSearch, data),
+                getResume(Last.getLastBooking(data.getMyBooks()), userSearch, data),
                 customerKeyboard.getResumeKeyboard(userSearch, data), userSearch.getServiceMsgId()));
     }
 
     public void sendBookingResume(UserSearch userSearch, ClientData data, int msgId) {
         msgService.processMessage(TelegramData.getDeleteMessage(userSearch.getUserId(), msgId));
-        String resume = getResume(LastListElement.getLastBooking(data.getMyBooks()), userSearch, data);
+        String resume = getResume(Last.getLastBooking(data.getMyBooks()), userSearch, data);
         msgService.processMessage(TelegramData.getEditMessage(userSearch.getUserId(), resume,
                 customerKeyboard.getResumeKeyboard(userSearch, data), userSearch.getServiceMsgId()));
     }
@@ -188,8 +188,8 @@ public class CustomerMessage {
                 + "Дата заезда: " + userSearch.getCheckIn() + ", после 12-00\n"
                 + "Дата выезда: " + userSearch.getCheckOut() + ", до 12-00\n\n"
                 + "Ваша контактная информация:\n"
-                + "ФИО: " + LastListElement.getLastElement(data.getFullCustomerNames()) + "\n"
-                + "Телефон: " + LastListElement.getLastElement(data.getContactNumbers()) + "\n\n"
+                + "ФИО: " + Last.getLast(data.getFullCustomerNames()) + "\n"
+                + "Телефон: " + Last.getLast(data.getContactNumbers()) + "\n\n"
 
                 + (booking.getUserComment() == null ? "" : "Комментарий: " + booking.getUserComment() + "\n\n")
 

@@ -4,13 +4,13 @@ import app.booking.sheets.model.Booking;
 
 import java.util.List;
 
-public class LastListElement {
+public class Last {
 
-    public static String getLastElement(List<String> list) {
+    public static String getLast(List<String> list) {
         return list.get(list.size() - 1);
     }
 
-    public static void removeLastElement(List<String> list) {
+    public static void removeLast(List<String> list) {
         if (list != null && !list.isEmpty()) {
             list.remove(list.size() - 1);
         }

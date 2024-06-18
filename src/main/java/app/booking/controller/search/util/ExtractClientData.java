@@ -20,7 +20,7 @@ public class ExtractClientData {
     public ClientData updateData(UserSearch search, String formatedString, ClientData clientData, int msgId) {
         String[] info = extractInfo(formatedString);
 
-        if (!LastListElement.getLastElement(clientData.getContactNumbers()).equals(info[1])) {
+        if (!Last.getLast(clientData.getContactNumbers()).equals(info[1])) {
             String phoneNumber = PhoneNumberFormatter.formatNumber(info[1]);
 
             if (phoneNumber == null || phoneNumber.contains("null")) {
@@ -28,14 +28,14 @@ public class ExtractClientData {
                 msgService.sendPopupMessage(search.getInlineId(), Text.WRONG_PHONE_FORMAT.getText(), false);
                 return null;
             } else {
-                String lastPhone = LastListElement.getLastElement(clientData.getContactNumbers()) + " canceled";
-                LastListElement.removeLastElement(clientData.getContactNumbers());
+                String lastPhone = Last.getLast(clientData.getContactNumbers()) + " canceled";
+                Last.removeLast(clientData.getContactNumbers());
                 clientData.getContactNumbers().add(lastPhone);
                 clientData.getContactNumbers().add(phoneNumber);
             }
         }
 
-        if (!LastListElement.getLastElement(clientData.getFullCustomerNames()).equals(info[0])) {
+        if (!Last.getLast(clientData.getFullCustomerNames()).equals(info[0])) {
             String newCustomerName = info[0];
 
             if (newCustomerName.split(" ").length < 1
@@ -46,8 +46,8 @@ public class ExtractClientData {
                 msgService.sendPopupMessage(search.getInlineId(), Text.WRONG_NAME_FORMAT.getText(), false);
                 return null;
             } else {
-                String lastName = LastListElement.getLastElement(clientData.getFullCustomerNames()) + " canceled";
-                LastListElement.removeLastElement(clientData.getFullCustomerNames());
+                String lastName = Last.getLast(clientData.getFullCustomerNames()) + " canceled";
+                Last.removeLast(clientData.getFullCustomerNames());
 
                 clientData.getFullCustomerNames().add(lastName);
                 clientData.getFullCustomerNames().add(newCustomerName);

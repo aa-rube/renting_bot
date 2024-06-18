@@ -3,7 +3,7 @@ package app.booking.handler;
 import app.booking.controller.dialog.CustomerMessage;
 import app.booking.controller.search.StartBookingSearch;
 import app.booking.controller.search.util.ExtractClientData;
-import app.booking.controller.search.util.LastListElement;
+import app.booking.controller.search.util.Last;
 import app.booking.controller.search.util.PhoneNumberFormatter;
 import app.booking.sheets.model.Booking;
 import app.booking.sheets.model.Room;
@@ -92,14 +92,14 @@ public class UserDialogHandler {
             if (clientData.getFullCustomerNames() != null
                     && clientData.getContactNumbers() != null
 
-                    && !LastListElement.getLastElement(clientData.getFullCustomerNames()).contains("canceled")
-                    && !LastListElement.getLastElement(clientData.getContactNumbers()).contains("canceled")) {
+                    && !Last.getLast(clientData.getFullCustomerNames()).contains("canceled")
+                    && !Last.getLast(clientData.getContactNumbers()).contains("canceled")) {
 
                 customerMessage.sendBookingResume(search, clientData);
             }
 
             if (clientData.getFullCustomerNames() == null
-                    || LastListElement.getLastElement(clientData.getFullCustomerNames()).contains("canceled")) {
+                    || Last.getLast(clientData.getFullCustomerNames()).contains("canceled")) {
 
                 addFullName.add(chatId);
                 customerMessage.startInputRealClientData(search, objId, msgId);
@@ -134,12 +134,12 @@ public class UserDialogHandler {
             int lastBookingIndex = clientData.getMyBooks().size() - 1;
 
             clientData.getMyBooks().get(lastBookingIndex)
-                    .setFullUserName(LastListElement.getLastElement(clientData.getFullCustomerNames()));
+                    .setFullUserName(Last.getLast(clientData.getFullCustomerNames()));
 
             clientData.getMyBooks().get(lastBookingIndex)
-                    .setPhoneNumber(LastListElement.getLastElement(clientData.getContactNumbers()));
+                    .setPhoneNumber(Last.getLast(clientData.getContactNumbers()));
 
-            Booking booking = LastListElement.getLastBooking(clientData.getMyBooks());
+            Booking booking = Last.getLastBooking(clientData.getMyBooks());
             userDataService.save(clientData);
 
             customerMessage.makeBooking(booking, search, clientData.getUserName(), msgId);
@@ -182,7 +182,7 @@ public class UserDialogHandler {
                     shareYourPhone.add(chatId);
                     return;
                 } else {
-                    if (!LastListElement.getLastElement(data.getContactNumbers()).contains("canceled")) {
+                    if (!Last.getLast(data.getContactNumbers()).contains("canceled")) {
                         customerMessage.sendBookingResume(startBookingSearch.getUserSearch(chatId), data);
                         return;
                     }
@@ -222,8 +222,8 @@ public class UserDialogHandler {
 
             ClientData data = userDataService.getClientData(chatId, update);
 
-            Booking lastBooking = LastListElement.getLastBooking(data.getMyBooks());
-            LastListElement.removeLastBooking(data.getMyBooks());
+            Booking lastBooking = Last.getLastBooking(data.getMyBooks());
+            Last.removeLastBooking(data.getMyBooks());
 
             lastBooking.setUserComment(text);
             data.getMyBooks().add(lastBooking);
