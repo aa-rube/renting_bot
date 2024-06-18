@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "sincere-bongo-407313",
+  "private_key_id": "03dfed1a6f2f61e9e5d7a80e2c3f6768266240eb",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC99zByMG/d4anj\nKAAOrbJmz9zFmXhxB/o42WL8AkmpZ28iyr9dOp2kS5QIUtLgnlGuEioSJA4WcRKg\n0hyeHDlWnz0yBBVasa1WMlgW4jsGZVz2iEzUgGBrNZvdemWXMtg/RZcq+XG7Bjid\nSnHLPjYVR4UCN8eFfihSdzbgZ6C8st3OG4ITr+L3dFukOykaTD9KiT5VHiasyAFF\np3t4qPPBuU+HUoKZc5CXURSwc3gEyEVtzdZ7yW9ryzJFCVCHOipyT/SNkfeukp4M\ncmq5pxC/nQxggQ96rP5GLdZd3vhyzD3V14EHs4oKC56PU0PwxD7qTVQv1bn2UkaZ\nThQb8iX3AgMBAAECggEAXXj9qhpiWRvag88hZBec8pDyMXrINFn4CjQRTC51/3jJ\nSyXXTrDyc67KquPSJrtQNqZydBWwpuNBhseMVFJP9msJagxvU36c645/INd1srp6\nqUY9A80dZHNu++ZniaP3mv6LmRY/m4a+ocrJPngglYzpCkPXFb0TayyE4JutEFvb\nCoKjYKbchl+yr0U4IVZ+LA9aRPoWZd3LXYlTq2ML+rXi9tiAnKc66Bnw0WHKMZTh\nKpLH7MMcec6nSSrtSDgwha558tFVocAuDyAP02bI6z005JRwJePY7+1PAfR896pj\n15a82gpuT+hjOZtBD5pYi2+pnEhAKOkRd0udi715KQKBgQDwZ+yCQBNgxnNNLxUj\nbj/NFspNcXEjZJK/xbPMuwyHKcRo6gyQ0JrJpNZr2+6RkB2LufcFcrLgstMXLj2D\n+t+WGQ3xG+2hyBQh+6wUOFAS5+ylNI/JI4sVwzFvvfO//uBDRUW0CrRfBqGOeBDi\ndZxjdTWr5m/3K0R3cfnWztIJKQKBgQDKSay2P9YeGYUdV72hXxItfTmwX6uCa0qI\njz9/oJoHHctoiiMykv8durUs8Rfg+qdsySidqx9iItNNPhkxXQQkYDAyvWC+JDXS\n+pbhoCH8qdi87RT/JPbqBpgU0LiuFvlMt62scx/1pr7Vii27LS31+2NX9uKCLwDJ\ncmVUHCn6HwKBgHzbLI1VI/tN9hIvEsZs+vvUC0t/UGg2UrUAw+nfd5k3SwfGDrKj\ndNCnKKmp9tRoyb+I3M9ai6aBmXpfjJlgEQFOj9waSieM10/y+qMhwAyhoVkH3Gl1\naUXrM2C6gb7Ea8rkTlg8ewMjWYK5vuMufAN3m2Fk89+l/BAhBMXYcmNJAoGBAJNF\nmiFBToCxcbFQLLXsgk5t6e8XZ8VWmXfcWo1vflQKBAoC7+clD+k0Ai1LBWh89CGG\nPjSz3fBTjGSi/jJrFtXo1Y5LQ8CKmkkUuX5gV/4cJbg+Htg2sDDnRhd5ccsE3NFW\ntHFli3ILyMmshOjN1rVMJSJokrXWxIrk5xKaQpFfAoGAQ0aYZozK1tR8NWejn5yK\nJrotYNwRgP94NhkgJqVPDzWl3bWsNyE4jd1pO0xT5QzLyF4ohPZC06cGLr1VmkJs\nITfsGe5+0/wDiot2nlvOBPRb/AuzH0lT0KxfJkTWcFdY5dQ64QlbFhiGiFI5F/Fs\nT6PPmvGAou8O4MCAb07w0RI=\n-----END PRIVATE KEY-----\n",
+  "client_email": "service-acc@sincere-bongo-407313.iam.gserviceaccount.com",
+  "client_id": "109667549867718535727",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/service-acc%40sincere-bongo-407313.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

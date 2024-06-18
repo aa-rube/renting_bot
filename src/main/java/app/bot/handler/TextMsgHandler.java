@@ -1,60 +1,87 @@
 package app.bot.handler;
 
-import app.bot.adminpanel.AdminPanelController;
-import app.bot.adminpanel.invite.InviteRedisRepository;
+import app.booking.admin.AdminMessageController;
+import app.booking.controller.dialog.CustomerMessage;
+import app.booking.controller.search.StartBookingSearch;
+import app.booking.handler.UserDialogHandler;
+import app.booking.user.service.UserDataService;
 import app.bot.config.BotConfig;
-import app.trading.db.service.UserTraderService;
-import app.trading.util.TraderSeeder;
-import app.security.data.AuthMessages;
-import app.security.Authorisation;
+import app.bot.helpcentre.HelpCentre;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.time.LocalDateTime;
+
 @Service
 public class TextMsgHandler {
-    @Autowired
-    private BotConfig config;
-    @Autowired
-    private AdminPanelController adminPanel;
-    @Autowired
-    private Authorisation authorisation;
-    @Autowired
-    private AuthMessages authMessages;
-    @Autowired
-    private UserTraderService userTraderService;
-    @Autowired
-    private InviteRedisRepository inviteRepository;
 
-    private Long getAdminCatId() {
-       return config.getAdmin();
+    @Autowired
+    private BotConfig botConfig;
+
+    @Autowired
+    private StartBookingSearch startBookingSearch;
+
+    @Autowired
+    private CustomerMessage customerMessage;
+
+    @Autowired
+    private UserDialogHandler userDialogHandler;
+
+    @Autowired
+    private UserDataService userDataService;
+
+    @Autowired
+    private AdminMessageController adminMessageController;
+
+    @Autowired
+    private HelpCentre helpCentre;
+
+
+    private Long getAdminChatId() {
+        return botConfig.getAdminChat();
     }
 
     public void updateHandler(Update update) {
-        if (update.getMessage().getChatId().equals(getAdminCatId())) {
-            adminPanel.textHandler(update);
-            return;
-        }
+        String text = update.getMessage().getText();
+        Long chatId = update.getMessage().getChatId();
 
-        if (update.getMessage().getText().equals("/start")) {
-            String user = update.getMessage().getFrom().getUserName();
-            Long chatId = update.getMessage().getChatId();
+        if (text != null && (text.equals("/start") || text.equals("/new_search"))) {
+            helpCentre.stopSupport(chatId);
 
-            if (userTraderService.findTrader(chatId).isPresent()) {
-                authMessages.sendGreetingMessage(chatId, "", -1);
-                return;
+            startBookingSearch.startSearch(chatId);
+
+            if (!userDataService.clientDataExist(chatId)) {
+                userDataService.createClient(update);
             }
 
-            if (inviteRepository.getInviteUser(user) == null) return;
-            inviteRepository.deleteInviteUser(user);
-
-            userTraderService.save(TraderSeeder.createNewTrader(update, user));
-            authMessages.sendGreetingMessage(chatId,
-                    "Благодарим за регистрацию в нашем торговом боте! Для продолжения выберите биржу!\n\n",
-                    -1);
             return;
         }
 
-        authorisation.handleTextMessage(update);
+        if (!helpCentre.getChattingWithAdmin().containsKey(chatId)
+                && text != null && text.startsWith("/help_me")) {
+            helpCentre.startSupport(chatId);
+            return;
+        }
+
+        if (text != null && helpCentre.getChattingWithAdmin().containsKey(chatId)
+        && text.equals("Завершить чат с поддержкой")) {
+            helpCentre.stopSupport(chatId);
+            return;
+        }
+
+        if (helpCentre.getChattingWithAdmin().containsKey(chatId)) {
+            helpCentre.getChattingWithAdmin().put(chatId, LocalDateTime.now());
+            helpCentre.forwardMessage(update.getMessage());
+            return;
+        }
+
+        if (text != null && chatId.equals(getAdminChatId())) {
+            adminMessageController.textHandler(update, chatId, text);
+            return;
+        }
+
+        userDialogHandler.textHandler(update);
     }
+
 }
