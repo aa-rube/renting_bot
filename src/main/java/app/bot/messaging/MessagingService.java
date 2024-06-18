@@ -55,10 +55,6 @@ public class MessagingService {
         }
     }
 
-    public void processCallBackAnswer(Update update) {
-
-    }
-
     public void deleteSomeMessageFromChat(Long chatId, int msgId, int count) {
         for (int i = 0; i < count; i++) {
             processMessage(TelegramData.getDeleteMessage(chatId, msgId - i));

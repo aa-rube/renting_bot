@@ -188,24 +188,23 @@ public class BookingController {
                 data.getFullCustomerNames().add(text);
                 userDataService.save(data);
                 addFullName.remove(chatId);
+                msgService.deleteSomeMessageFromChat(chatId, msgId, 1);
 
-                if (data.getContactNumbers() == null ||
-                        Last.getLast(data.getContactNumbers()).contains("canceled")) {
-
+                if (data.getContactNumbers() == null || Last.getLast(data.getContactNumbers()).contains("canceled")) {
                     shareYourPhone.add(chatId);
                     customerMessage.shareYourPhone(searchController.getUserSearch(update));
-                    return;
 
+                    return;
                 } else {
                     customerMessage.sendBookingResume(searchController.getUserSearch(update), data);
-                    return;
                 }
 
             } else {
                 msgService.processMessage(TelegramData.getSendMessage(chatId,
                         Text.YOU_GOT_A_TYPO.getText(), null));
-                return;
             }
+
+            return;
         }
 
         if (shareYourPhone.contains(chatId)) {
@@ -250,7 +249,8 @@ public class BookingController {
         }
 
         if (text.contains(Text.CHANGE_CLIENT_DATA_STRING.getText())) {
-            ClientData data = extractClientData.updateData(search, text, userDataService.getClientData(chatId, update), msgId);
+            ClientData data = extractClientData.updateData(search, text,
+                    userDataService.getClientData(chatId, update), msgId);
             if (data == null) return;
 
             userDataService.save(data);
@@ -278,7 +278,10 @@ public class BookingController {
             return;
         }
 
-        data.setContactNumbers(new ArrayList<>());
+        if (data.getContactNumbers() == null) {
+            data.setContactNumbers(new ArrayList<>());
+        }
+
         data.getContactNumbers().add(phone);
         userDataService.save(data);
 
