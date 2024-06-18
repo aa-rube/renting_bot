@@ -92,6 +92,7 @@ public class BookingController {
                     && !Last.getLast(clientData.getContactNumbers()).contains("canceled")) {
 
                 customerMessage.sendBookingResume(search, clientData);
+                return;
             }
 
             //имя не заполнено
@@ -100,14 +101,18 @@ public class BookingController {
 
                 addFullName.add(chatId);
                 customerMessage.startInputRealClientData(search, objId, msgId);
+                return;
             }
 
             //телефон не заполнен
-            if (clientData.getContactNumbers() == null ||
-            Last.getLast(clientData.getContactNumbers()).contains("canceled")) {
+            if (clientData.getContactNumbers() == null
+                    || Last.getLast(clientData.getContactNumbers()).contains("canceled")) {
+
                 customerMessage.shareYourPhone(searchController.getUserSearch(update));
                 shareYourPhone.add(chatId);
+                return;
             }
+
             return;
         }
 
@@ -178,21 +183,22 @@ public class BookingController {
             ClientData data = userDataService.getClientData(chatId, update);
 
             if (text.split(" ").length > 1) {
+
                 data.setFullCustomerNames(new ArrayList<>());
                 data.getFullCustomerNames().add(text);
                 userDataService.save(data);
                 addFullName.remove(chatId);
 
                 if (data.getContactNumbers() == null ||
-                Last.getLast(data.getContactNumbers()).contains("canceled")) {
-                    customerMessage.shareYourPhone(searchController.getUserSearch(update));
+                        Last.getLast(data.getContactNumbers()).contains("canceled")) {
+
                     shareYourPhone.add(chatId);
+                    customerMessage.shareYourPhone(searchController.getUserSearch(update));
                     return;
+
                 } else {
-                    if (!Last.getLast(data.getContactNumbers()).contains("canceled")) {
-                        customerMessage.sendBookingResume(searchController.getUserSearch(update), data);
-                        return;
-                    }
+                    customerMessage.sendBookingResume(searchController.getUserSearch(update), data);
+                    return;
                 }
 
             } else {
@@ -200,7 +206,6 @@ public class BookingController {
                         Text.YOU_GOT_A_TYPO.getText(), null));
                 return;
             }
-            return;
         }
 
         if (shareYourPhone.contains(chatId)) {
@@ -215,11 +220,14 @@ public class BookingController {
                 return;
             }
 
-            data.setContactNumbers(new ArrayList<>());
+            if (data.getContactNumbers() == null) {
+                data.setContactNumbers(new ArrayList<>());
+            }
+
             data.getContactNumbers().add(phone);
             userDataService.save(data);
 
-            msgService.deleteSomeMessageFromChat(chatId, msgId, 3);
+            msgService.deleteSomeMessageFromChat(chatId, msgId, 2);
             customerMessage.sendBookingResume(search, data);
             shareYourPhone.remove(chatId);
             return;
@@ -237,7 +245,7 @@ public class BookingController {
             data.getMyBooks().add(lastBooking);
             userDataService.save(data);
 
-            customerMessage.completeAddComment(search,data, update.getMessage().getMessageId());
+            customerMessage.completeAddComment(search, data, update.getMessage().getMessageId());
             return;
         }
 
@@ -274,7 +282,7 @@ public class BookingController {
         data.getContactNumbers().add(phone);
         userDataService.save(data);
 
-        msgService.deleteSomeMessageFromChat(chatId, msgId, 3);
+        msgService.deleteSomeMessageFromChat(chatId, msgId, 2);
         customerMessage.sendBookingResume(search, data);
     }
 

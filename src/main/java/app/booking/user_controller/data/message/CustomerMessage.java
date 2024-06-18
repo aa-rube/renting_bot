@@ -166,8 +166,6 @@ public class CustomerMessage {
     }
 
     public void shareYourPhone(UserSearch userSearch) {
-
-
         msgService.processMessage(TelegramData.getSendMessage(userSearch.getUserId(),
                 "Поделитесь Вашим номером телефона по специальной кнопке снизу или введите ваш телефон в международном формате",
                 customerKeyboard.requestContact()));
