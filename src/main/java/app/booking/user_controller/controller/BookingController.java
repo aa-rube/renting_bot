@@ -86,20 +86,27 @@ public class BookingController {
             clientData.getMyBooks().add(booking);
             userDataService.save(clientData);
 
-            if (clientData.getFullCustomerNames() != null
-                    && clientData.getContactNumbers() != null
-
+            //данные заполнены и актуальны
+            if (clientData.getFullCustomerNames() != null && clientData.getContactNumbers() != null
                     && !Last.getLast(clientData.getFullCustomerNames()).contains("canceled")
                     && !Last.getLast(clientData.getContactNumbers()).contains("canceled")) {
 
                 customerMessage.sendBookingResume(search, clientData);
             }
 
+            //имя не заполнено
             if (clientData.getFullCustomerNames() == null
                     || Last.getLast(clientData.getFullCustomerNames()).contains("canceled")) {
 
                 addFullName.add(chatId);
                 customerMessage.startInputRealClientData(search, objId, msgId);
+            }
+
+            //телефон не заполнен
+            if (clientData.getContactNumbers() == null ||
+            Last.getLast(clientData.getContactNumbers()).contains("canceled")) {
+                customerMessage.shareYourPhone(searchController.getUserSearch(update));
+                shareYourPhone.add(chatId);
             }
             return;
         }
@@ -176,7 +183,8 @@ public class BookingController {
                 userDataService.save(data);
                 addFullName.remove(chatId);
 
-                if (data.getContactNumbers() == null) {
+                if (data.getContactNumbers() == null ||
+                Last.getLast(data.getContactNumbers()).contains("canceled")) {
                     customerMessage.shareYourPhone(searchController.getUserSearch(update));
                     shareYourPhone.add(chatId);
                     return;
