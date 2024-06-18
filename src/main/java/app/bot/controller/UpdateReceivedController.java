@@ -45,10 +45,10 @@ public class UpdateReceivedController extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         if (update.hasCallbackQuery()) {
             new Thread(() -> callBackDataHandler.updateHandler(update)).start();
-        } else if(update.hasMessage() && update.getMessage().isReply()) {
-            helpCentre.replayHandle(update);
         } else if (update.hasMessage() && update.getMessage().hasContact()) {
             new Thread(() -> bookingController.contactHandler(update)).start();
+        } else if(update.hasMessage() && update.getMessage().isReply()) {
+            helpCentre.replayHandle(update);
         } else if (update.hasMessage()) {
             new Thread(() -> textMsgHandler.updateHandler(update)).start();
         }
