@@ -1,5 +1,6 @@
 package app.bot.messaging;
 
+import app.booking.util.Sleep;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
@@ -74,6 +75,15 @@ public class TelegramData {
 
 
     public static Object getDeleteMessage(Long chatId, int msgId) {
+        DeleteMessage delete = new DeleteMessage();
+        delete.setChatId(chatId);
+        delete.setMessageId(msgId);
+        return delete;
+    }
+
+    public static Object getTimerDeleteMessage(Long chatId, int msgId, long time) {
+        Sleep.sleepSafely(time);
+
         DeleteMessage delete = new DeleteMessage();
         delete.setChatId(chatId);
         delete.setMessageId(msgId);

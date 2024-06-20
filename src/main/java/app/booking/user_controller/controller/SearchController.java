@@ -111,6 +111,7 @@ public class SearchController {
             search.setSearchFilled(true);
             searchMap.put(chatId, search);
             customerMessage.buildRoomPages(inlineId, search);
+            msgService.processMessage(TelegramData.getTimerDeleteMessage(chatId, msgId, 5000L));
         } else if (data.contains("USER_SRCH_CLEAR")) {
             restartSearch(chatId, msgId, true);
         }
