@@ -38,28 +38,19 @@ public class SearchController {
     private final CopyOnWriteArraySet<Long> clearFilters = new CopyOnWriteArraySet<>();
 
     public UserSearch getUserSearch(Update update) {
-        String inlineId;
         Long userId;
 
         if (update.hasCallbackQuery()) {
-            inlineId = update.getCallbackQuery().getId();
             userId = update.getCallbackQuery().getFrom().getId();
         } else {
             userId = update.getMessage().getFrom().getId();
 
-            if (searchMap.get(userId) != null) {
-                inlineId = searchMap.get(userId).getInlineId();
-            } else {
-                inlineId = "";
-            }
         }
 
         try {
-            getSearchMap().get(userId).setInlineId(inlineId);
             return searchMap.get(userId);
         } catch (Exception e) {
             searchMap.put(userId, newSearch(userId));
-            getSearchMap().get(userId).setInlineId(inlineId);
             return searchMap.get(userId);
         }
     }
@@ -94,10 +85,7 @@ public class SearchController {
     }
 
     public void callBackDataHandle(Update update, Long chatId, String data, int msgId) {
-        String inlineId = update.getCallbackQuery().getId();
         UserSearch search = searchMap.get(chatId);
-        search.setInlineId(inlineId);
-        searchMap.put(chatId, search);
 
         if (data.contains("_PERSON")) {
             updatePersons(search, data);
@@ -109,6 +97,8 @@ public class SearchController {
             changePage(search, chatId, data, msgId);
         } else if (data.contains("USER_SRCH_START")) {
             search.setSearchFilled(true);
+            String inlineId = update.getCallbackQuery().getId();
+            search.setInlineId(inlineId);
             searchMap.put(chatId, search);
             customerMessage.buildRoomPages(inlineId, search);
         } else if (data.contains("USER_SRCH_CLEAR")) {
