@@ -210,7 +210,8 @@ public class CustomerMessage {
     public void completeAddComment(UserSearch userSearch, ClientData data, int msgId) {
         msgService.processMessage(TelegramData.getPopupMessage(userSearch.getInlineId(),
                 "Комментарий успешно добавлен!", false));
-        msgService.deleteSomeMessageFromChat(userSearch.getUserId(), msgId, 1);
+
+        msgService.processMessage(TelegramData.getTimerDeleteMessage(userSearch.getUserId(), msgId, 1000L));
         sendBookingResume(userSearch, data);
     }
 }
