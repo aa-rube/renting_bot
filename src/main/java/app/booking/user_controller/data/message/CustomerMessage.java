@@ -211,7 +211,6 @@ public class CustomerMessage {
         msgService.processMessage(TelegramData.getPopupMessage(userSearch.getInlineId(),
                 "Комментарий успешно добавлен!", false));
         msgService.processMessage(TelegramData.getDeleteMessage(userSearch.getUserId(), msgId));
-        Sleep.sleepSafely(2000L);
         sendBookingResume(userSearch, data);
     }
 }
