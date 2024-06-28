@@ -175,6 +175,7 @@ public class BookingController {
                 return;
             }
 
+            search.setPage(search.getPage() + 1);
             searchController.getSearchMap().put(chatId, search);
             customerMessage.buildRoomPages(search.getInlineId(), search);
             return;

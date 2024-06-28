@@ -94,9 +94,6 @@ public class CustomerMessage {
             noMoreRooms(userSearch);
         }
 
-        if (endIndex < totalRooms) {
-            userSearch.setPage(page + 1);
-        }
     }
 
     private void noMoreRooms(UserSearch userSearch) {
