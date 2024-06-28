@@ -59,9 +59,8 @@ public class BookingController {
     private final CopyOnWriteArraySet<Long> addComment = new CopyOnWriteArraySet<>();
 
     public void handle(Update update, Long chatId, String data) {
-        UserSearch search = searchController.getUserSearch(update);
-
         int msgId = update.getCallbackQuery().getMessage().getMessageId();
+        UserSearch search = searchController.getUserSearch(update, msgId);
 
         if (data.contains("USER_SRCH_")) {
             searchController.callBackDataHandle(update, chatId, data, msgId);
@@ -76,7 +75,7 @@ public class BookingController {
         if (data.contains("_STARTBOOKING_")) {
             int objId = IntParser.getIntByString(data, 2);
             search.setServiceMsgId(msgId);
-            Booking booking = bookingService.createBookingObject(searchController.getUserSearch(update), objId);
+            Booking booking = bookingService.createBookingObject(searchController.getUserSearch(update, msgId), objId);
             ClientData clientData = userDataService.getClientData(chatId, update);
 
             if (clientData.getMyBooks() == null) {
@@ -86,7 +85,6 @@ public class BookingController {
             clientData.getMyBooks().add(booking);
             userDataService.save(clientData);
 
-            //данные заполнены и актуальны
             if (clientData.getFullCustomerNames() != null && clientData.getContactNumbers() != null
                     && !Last.getLast(clientData.getFullCustomerNames()).contains("canceled")
                     && !Last.getLast(clientData.getContactNumbers()).contains("canceled")) {
@@ -95,7 +93,6 @@ public class BookingController {
                 return;
             }
 
-            //имя не заполнено
             if (clientData.getFullCustomerNames() == null
                     || Last.getLast(clientData.getFullCustomerNames()).contains("canceled")) {
 
@@ -104,11 +101,10 @@ public class BookingController {
                 return;
             }
 
-            //телефон не заполнен
             if (clientData.getContactNumbers() == null
                     || Last.getLast(clientData.getContactNumbers()).contains("canceled")) {
 
-                customerMessage.shareYourPhone(searchController.getUserSearch(update));
+                customerMessage.shareYourPhone(searchController.getUserSearch(update, msgId));
                 shareYourPhone.add(chatId);
                 return;
             }
@@ -166,7 +162,7 @@ public class BookingController {
         String text = update.getMessage().getText();
         int msgId = update.getMessage().getMessageId();
 
-        UserSearch search = searchController.getUserSearch(update);
+        UserSearch search = searchController.getUserSearch(update, -1);
 
         if (text.equals("/next")
                 || (text.contains("Следующие ") && text.contains(" варианта⏭⏭"))) {
@@ -192,11 +188,11 @@ public class BookingController {
 
                 if (data.getContactNumbers() == null || Last.getLast(data.getContactNumbers()).contains("canceled")) {
                     shareYourPhone.add(chatId);
-                    customerMessage.shareYourPhone(searchController.getUserSearch(update));
+                    customerMessage.shareYourPhone(searchController.getUserSearch(update, -1));
 
                     return;
                 } else {
-                    customerMessage.sendBookingResume(searchController.getUserSearch(update), data);
+                    customerMessage.sendBookingResume(searchController.getUserSearch(update, -1), data);
                 }
 
             } else {
@@ -265,7 +261,7 @@ public class BookingController {
     public void contactHandler(Update update) {
         Long chatId = update.getMessage().getChatId();
         int msgId = update.getMessage().getMessageId();
-        UserSearch search = searchController.getUserSearch(update);
+        UserSearch search = searchController.getUserSearch(update, -1);
 
         shareYourPhone.remove(chatId);
 

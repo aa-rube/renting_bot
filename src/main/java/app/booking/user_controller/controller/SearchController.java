@@ -37,7 +37,7 @@ public class SearchController {
     @Getter
     private final CopyOnWriteArraySet<Long> clearFilters = new CopyOnWriteArraySet<>();
 
-    public UserSearch getUserSearch(Update update) {
+    public UserSearch getUserSearch(Update update, int msgId) {
         String inlineId;
         Long userId;
 
@@ -58,13 +58,13 @@ public class SearchController {
             getSearchMap().get(userId).setInlineId(inlineId);
             return searchMap.get(userId);
         } catch (Exception e) {
-            searchMap.put(userId, newSearch(userId));
+            searchMap.put(userId, newSearch(userId, msgId));
             getSearchMap().get(userId).setInlineId(inlineId);
             return searchMap.get(userId);
         }
     }
 
-    public void startSearch(Long chatId) {
+    public void startSearch(Long chatId, int msgId) {
         if (searchMap.containsKey(chatId) && !clearFilters.contains(chatId)) {
             clearFilters.add(chatId);
             msgService.processMessage(TelegramData.getSendMessage(chatId,
@@ -73,10 +73,10 @@ public class SearchController {
         }
 
         clearFilters.remove(chatId);
-        newSearch(chatId);
+        newSearch(chatId, msgId);
     }
 
-    private UserSearch newSearch(Long chatId) {
+    private UserSearch newSearch(Long chatId, int msgId) {
         UserSearch search = new UserSearch(
                 chatId,
                 LocalDate.now(),
@@ -87,8 +87,13 @@ public class SearchController {
         );
 
         searchMap.put(chatId, search);
-        msgService.processMessage(TelegramData.getSendMessage(chatId, Text.START_SEARCH.getText(),
-                searchKeyboard.getPersonsKeyboard(search)));
+        if (msgId == 1) {
+            msgService.processMessage(TelegramData.getSendMessage(chatId, Text.START_SEARCH.getText(),
+                    searchKeyboard.getPersonsKeyboard(search)));
+        } else {
+            msgService.processMessage(TelegramData.getEditMessage(chatId, Text.START_SEARCH.getText(),
+                    searchKeyboard.getPersonsKeyboard(search), msgId));
+        }
 
         return search;
     }
@@ -120,7 +125,7 @@ public class SearchController {
     public void restartSearch(Long chatId, int msgId, boolean delete) {
         clearFilters.remove(chatId);
 
-        newSearch(chatId);
+        newSearch(chatId, msgId);
         if (delete) {
             Sleep.sleepSafely(5000);
             msgService.processMessage(TelegramData.getDeleteMessage(chatId, msgId));

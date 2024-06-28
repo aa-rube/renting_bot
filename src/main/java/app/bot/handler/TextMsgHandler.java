@@ -49,7 +49,7 @@ public class TextMsgHandler {
         if (text != null && (text.equals("/start") || text.equals("/new_search"))) {
             helpCentre.stopSupport(chatId);
 
-            searchController.startSearch(chatId);
+            searchController.startSearch(chatId, -1);
 
             if (!userDataService.clientDataExist(chatId)) {
                 userDataService.createClient(update);
