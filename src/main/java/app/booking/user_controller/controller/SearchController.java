@@ -118,18 +118,13 @@ public class SearchController {
             customerMessage.buildRoomPages(inlineId, search);
             msgService.processMessage(TelegramData.getTimerDeleteMessage(chatId, msgId, 5000L));
         } else if (data.contains("USER_SRCH_CLEAR")) {
-            restartSearch(chatId, msgId, true);
+            restartSearch(chatId, msgId);
         }
     }
 
-    public void restartSearch(Long chatId, int msgId, boolean delete) {
+    public void restartSearch(Long chatId, int msgId) {
         clearFilters.remove(chatId);
-
         newSearch(chatId, msgId);
-        if (delete) {
-            Sleep.sleepSafely(5000);
-            msgService.processMessage(TelegramData.getDeleteMessage(chatId, msgId));
-        }
     }
 
     private void updatePersons(UserSearch search, String data) {
