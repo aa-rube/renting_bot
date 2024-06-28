@@ -69,8 +69,7 @@ public class CustomerMessage {
         int endIndex = Math.min(startIndex + PAGE_SIZE, totalRooms);
 
         if (startIndex >= totalRooms) {
-            msgService.processMessage(TelegramData.getSendMessage(userSearch.getUserId(),
-                    "Больше вариантов нет", null));
+            noMoreRooms(userSearch);
             return;
         }
 
@@ -81,12 +80,18 @@ public class CustomerMessage {
 
         List<Room> roomsOnPage = rooms.subList(startIndex, endIndex);
 
+        int j = 0;
         for (Room room : roomsOnPage) {
             if (userSearch.getEscapingRooms().contains(room.getRoomId())) continue;
 
+            j++;
             String text = textBuilder(room);
             msgService.processMessage(TelegramData.getSendMessage(userSearch.getUserId(),
                     text, customerKeyboard.getRoomKeyboard(room)));
+        }
+
+        if (j == 0) {
+            noMoreRooms(userSearch);
         }
 
         if (endIndex < totalRooms) {
@@ -94,51 +99,12 @@ public class CustomerMessage {
         }
     }
 
+    private void noMoreRooms(UserSearch userSearch) {
+        msgService.processMessage(TelegramData.getSendMessage(userSearch.getUserId(),
+                "Больше вариантов нет", null));
+    }
 
-//    private static final int PAGE_SIZE = 3;
-//
-//    public void buildRoomPages(String inlineId, UserSearch userSearch) {
-//        msgService.processMessage(TelegramData.getPopupMessage(inlineId,
-//                Text.READING_THE_TABLE.getText(), false ));
-//
-//        List<Room> rooms = roomAvailabilityService.searchAvailableRooms(userSearch);
-//
-//        if (rooms.isEmpty()) {
-//            msgService.processMessage(TelegramData.getPopupMessage(inlineId,
-//                    Text.NO_ONE_ROOM.getText(), false));
-//            return;
-//        }
-//
-//        int page = userSearch.getPage();
-//
-//        System.out.println("page: " + page);
-//
-//        int totalRooms = rooms.size();
-//
-//        int startIndex = page * PAGE_SIZE;
-//        int endIndex = Math.min(startIndex + PAGE_SIZE, totalRooms);
-//
-//        if (page == 0) {
-//            msgService.processMessage(TelegramData.getSendMessage(userSearch.getUserId(),
-//                    "Нажмите кнопку снизу экрана, чтобы загрузить следующие варианты",
-//                    customerKeyboard.getNextPage(PAGE_SIZE)));
-//        }
-//
-//        if (startIndex >= totalRooms || endIndex > totalRooms) {
-//            msgService.processMessage(TelegramData.getSendMessage(userSearch.getUserId(),
-//                    "Больше вариантов нет",null));
-//            return;
-//        }
-//
-//        List<Room> roomsOnPage = rooms.subList(startIndex, endIndex);
-//
-//        for (Room room : roomsOnPage) {
-//            String text = textBuilder(room);
-//            msgService.processMessage(TelegramData.getSendMessage(userSearch.getUserId(),
-//                    text, customerKeyboard.getRoomKeyboard(room)));
-//        }
-//
-//    }
+
 
     private String textBuilder(Room room) {
         StringBuilder builder = new StringBuilder();
