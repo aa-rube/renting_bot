@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -90,5 +91,9 @@ public class GoogleSheetsObjectReader {
                 .append(spreadsheetId, range, appendBody)
                 .setValueInputOption("RAW")
                 .execute();
+    }
+
+    public int getLinksCount(int objId) {
+        return getRecordsFromSheetById(objId).get().getLinks().size();
     }
 }

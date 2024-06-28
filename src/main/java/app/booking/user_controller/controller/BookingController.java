@@ -1,11 +1,11 @@
 package app.booking.user_controller.controller;
 
+import app.booking.room.service.MongoDBRoomService;
 import app.booking.user_controller.data.message.CustomerMessage;
 import app.booking.util.ExtractClientData;
 import app.booking.util.Last;
 import app.booking.util.PhoneNumberFormatter;
 import app.booking.sheets.model.Booking;
-import app.booking.sheets.model.Room;
 import app.booking.user_controller.model.UserSearch;
 import app.booking.sheets.repository.GoogleSheetsObjectReader;
 import app.booking.sheets.service.BookingService;
@@ -51,6 +51,9 @@ public class BookingController {
 
     @Autowired
     private HelpCentre helpCentre;
+
+    @Autowired
+    private MongoDBRoomService mongoDBRoomService;
 
     private final CopyOnWriteArraySet<Long> addFullName = new CopyOnWriteArraySet<>();
 
@@ -114,10 +117,10 @@ public class BookingController {
 
         if (data.contains("_DELETEROOM_")) {
             int objId = IntParser.getIntByString(data, 2);
-            Room room = googleSheetsObjectReader.getRecordsFromSheetById(objId).get();
+            int linksCount = mongoDBRoomService.findLinksCountByRoomId(objId);
 
-            searchController.getSearchMap().get(chatId).getDeletedRoomsBySearch().add(objId);
-            msgService.deleteSomeMessageFromChat(chatId, msgId, room.getLinks().size() + 1);
+            searchController.getSearchMap().get(chatId).getEscapingRooms().add(objId);
+            msgService.deleteSomeMessageFromChat(chatId, msgId, linksCount + 1);
             return;
         }
 
@@ -165,11 +168,13 @@ public class BookingController {
         UserSearch search = searchController.getUserSearch(update, -1);
 
         if (text.equals("/next")
-                || (text.contains("Следующие ") && text.contains(" варианта⏭⏭"))) {
+                || (text.contains("Следующие 3 варианта⏭⏭"))) {
 
-            if (!search.isSearchFilled()) return;
+            if (!search.isSearchFilled()) {
+                searchController.getUserSearch(update, -1);
+                return;
+            }
 
-            search.setPage(search.getPage() + 1);
             searchController.getSearchMap().put(chatId, search);
             customerMessage.buildRoomPages(search.getInlineId(), search);
             return;

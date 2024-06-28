@@ -65,6 +65,7 @@ public class SearchController {
     }
 
     public void startSearch(Long chatId, int msgId) {
+
         if (searchMap.containsKey(chatId) && !clearFilters.contains(chatId)) {
             clearFilters.add(chatId);
             msgService.processMessage(TelegramData.getSendMessage(chatId,
@@ -87,7 +88,8 @@ public class SearchController {
         );
 
         searchMap.put(chatId, search);
-        if (msgId == 1) {
+
+        if (msgId == -1) {
             msgService.processMessage(TelegramData.getSendMessage(chatId, Text.START_SEARCH.getText(),
                     searchKeyboard.getPersonsKeyboard(search)));
         } else {

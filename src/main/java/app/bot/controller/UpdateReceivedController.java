@@ -49,7 +49,7 @@ public class UpdateReceivedController extends TelegramLongPollingBot {
             new Thread(() -> bookingController.contactHandler(update)).start();
         } else if(update.hasMessage() && update.getMessage().isReply()) {
             helpCentre.replayHandle(update);
-        } else if (update.hasMessage()) {
+        } else if (update.hasMessage() && update.getMessage().hasText()) {
             new Thread(() -> textMsgHandler.updateHandler(update)).start();
         }
     }

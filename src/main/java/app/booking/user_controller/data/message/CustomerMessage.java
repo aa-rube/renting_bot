@@ -51,7 +51,7 @@ public class CustomerMessage {
 
     public void buildRoomPages(String inlineId, UserSearch userSearch) {
         msgService.processMessage(TelegramData.getPopupMessage(inlineId,
-                Text.READING_THE_TABLE.getText(), false ));
+                Text.READING_THE_TABLE.getText(), false));
 
         List<Room> rooms = roomAvailabilityService.searchAvailableRooms(userSearch);
 
@@ -62,37 +62,83 @@ public class CustomerMessage {
         }
 
         int page = userSearch.getPage();
+
         int totalRooms = rooms.size();
 
         int startIndex = page * PAGE_SIZE;
         int endIndex = Math.min(startIndex + PAGE_SIZE, totalRooms);
 
-        if (page == 0) {
+        if (startIndex >= totalRooms) {
             msgService.processMessage(TelegramData.getSendMessage(userSearch.getUserId(),
-                    "Нажмите кнопку снизу экрана, чтобы загрузить следующие варианты",
-                    customerKeyboard.getNextPage(PAGE_SIZE)));
+                    "Больше вариантов нет", null));
+            return;
         }
 
-        if (startIndex >= totalRooms || endIndex > totalRooms) {
-            msgService.processMessage(TelegramData.getPopupMessage(inlineId,"Больше вариантов нет",false));
-            return;
+        if (page == 0) {
+            msgService.processMessage(TelegramData.getSendMessage(userSearch.getUserId(),
+                    "Нажмите кнопку снизу экрана, чтобы загрузить следующие варианты", customerKeyboard.getNextPage(PAGE_SIZE)));
         }
 
         List<Room> roomsOnPage = rooms.subList(startIndex, endIndex);
 
         for (Room room : roomsOnPage) {
-            buildAndSendMessage(userSearch.getUserId(), room);
+            if (userSearch.getEscapingRooms().contains(room.getRoomId())) continue;
+
+            String text = textBuilder(room);
+            msgService.processMessage(TelegramData.getSendMessage(userSearch.getUserId(),
+                    text, customerKeyboard.getRoomKeyboard(room)));
         }
 
+        if (endIndex < totalRooms) {
+            userSearch.setPage(page + 1);
+        }
     }
 
 
-    private void buildAndSendMessage(Long chatId, Room room) {
-        String text = textBuilder(room);
-        msgService.processMessage(TelegramData.getSendMessage(chatId,
-                text, customerKeyboard.getRoomKeyboard(room)));
-    }
-
+//    private static final int PAGE_SIZE = 3;
+//
+//    public void buildRoomPages(String inlineId, UserSearch userSearch) {
+//        msgService.processMessage(TelegramData.getPopupMessage(inlineId,
+//                Text.READING_THE_TABLE.getText(), false ));
+//
+//        List<Room> rooms = roomAvailabilityService.searchAvailableRooms(userSearch);
+//
+//        if (rooms.isEmpty()) {
+//            msgService.processMessage(TelegramData.getPopupMessage(inlineId,
+//                    Text.NO_ONE_ROOM.getText(), false));
+//            return;
+//        }
+//
+//        int page = userSearch.getPage();
+//
+//        System.out.println("page: " + page);
+//
+//        int totalRooms = rooms.size();
+//
+//        int startIndex = page * PAGE_SIZE;
+//        int endIndex = Math.min(startIndex + PAGE_SIZE, totalRooms);
+//
+//        if (page == 0) {
+//            msgService.processMessage(TelegramData.getSendMessage(userSearch.getUserId(),
+//                    "Нажмите кнопку снизу экрана, чтобы загрузить следующие варианты",
+//                    customerKeyboard.getNextPage(PAGE_SIZE)));
+//        }
+//
+//        if (startIndex >= totalRooms || endIndex > totalRooms) {
+//            msgService.processMessage(TelegramData.getSendMessage(userSearch.getUserId(),
+//                    "Больше вариантов нет",null));
+//            return;
+//        }
+//
+//        List<Room> roomsOnPage = rooms.subList(startIndex, endIndex);
+//
+//        for (Room room : roomsOnPage) {
+//            String text = textBuilder(room);
+//            msgService.processMessage(TelegramData.getSendMessage(userSearch.getUserId(),
+//                    text, customerKeyboard.getRoomKeyboard(room)));
+//        }
+//
+//    }
 
     private String textBuilder(Room room) {
         StringBuilder builder = new StringBuilder();

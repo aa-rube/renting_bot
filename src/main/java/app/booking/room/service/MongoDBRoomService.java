@@ -28,4 +28,8 @@ public class MongoDBRoomService {
     public void deleteAllRooms() {
         repository.deleteAll();
     }
+
+    public int findLinksCountByRoomId(int roomId) {
+        return findByRoomId(roomId).map(value -> value.getLinks().size()).orElse(3);
+    }
 }

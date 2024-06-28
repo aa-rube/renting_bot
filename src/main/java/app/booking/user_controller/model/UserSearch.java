@@ -17,20 +17,20 @@ public class UserSearch {
     private LocalDate checkIn;
     private LocalDate checkOut;
     private int persons;
-    private List<Integer> deletedRoomsBySearch;
+    private List<Integer> escapingRooms;
     private int serviceMsgId;
     private String inlineId;
     private int page = 0;
     private boolean searchFilled;
 
     public UserSearch(Long userId, LocalDate checkIn, LocalDate checkOut, int persons,
-                      List<Integer> deletedRoomsBySearch, boolean searchFilled) {
+                      List<Integer> escapingRooms, boolean searchFilled) {
 
         this.userId = userId;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
         this.persons = persons;
-        this.deletedRoomsBySearch = deletedRoomsBySearch;
+        this.escapingRooms = escapingRooms;
         this.searchFilled = searchFilled;
     }
 }
